@@ -1,5 +1,6 @@
 package it.epicode.CapstonBackEndAF.dto;
 
+import it.epicode.CapstonBackEndAF.enumeration.Ruolo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -16,4 +17,5 @@ public class UserDto {
     private String username;
     @NotEmpty(message = "Obbligatorio inserire password")
     private String password;
+    private Ruolo ruolo;
 }
