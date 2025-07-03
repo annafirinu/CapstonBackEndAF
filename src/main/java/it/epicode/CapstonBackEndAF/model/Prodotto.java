@@ -17,6 +17,7 @@ public class Prodotto {
     private String nome;
     private BigDecimal prezzo;
     private Boolean disponibile;
+    private String immagineProdotto;
 
     @ManyToMany
     @JoinTable(
