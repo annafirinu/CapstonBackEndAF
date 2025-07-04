@@ -43,7 +43,7 @@ public class UserService {
         if(userDto.getRuolo() != null) {
             user.setRuolo(userDto.getRuolo());
         } else {
-            user.setRuolo(Ruolo.ADMIN);
+            user.setRuolo(Ruolo.USER);
         }
 
 
