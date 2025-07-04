@@ -31,6 +31,11 @@ public class MessaggioService{
 
         try {
             emailService.inviaMessaggioRicevuto(messaggio.getEmail(), messaggio.getNome());
+            emailService.inviaMessaggioAlPanificio(
+                    messaggio.getNome(),
+                    messaggio.getEmail(),
+                    messaggio.getMessaggio()
+            );
         } catch (Exception e) {
             System.err.println("Errore invio mail: " + e.getMessage());
         }

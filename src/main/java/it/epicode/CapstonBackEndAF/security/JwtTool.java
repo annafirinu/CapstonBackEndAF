@@ -7,9 +7,13 @@ import it.epicode.CapstonBackEndAF.model.User;
 import it.epicode.CapstonBackEndAF.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTool {
@@ -26,12 +30,24 @@ public class JwtTool {
     public String createToken(User user){
 
 
-        //creazione del token
+       /* //creazione del token
         return Jwts.builder().issuedAt(new Date()).
                 expiration(new Date(System.currentTimeMillis()+durata)).
                 subject(String.valueOf(user.getId())).
                 signWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes())).
-                compact();
+                compact();*/
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("authorities", user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
+        return Jwts.builder()
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + durata))
+                .subject(String.valueOf(user.getId()))
+                .claims(extraClaims)  // ✅ aggiungi qui i ruoli
+                .signWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes()))
+                .compact();
     }
 
 
