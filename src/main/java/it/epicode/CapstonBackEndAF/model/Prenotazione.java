@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class Prenotazione {
     private String email;
     private LocalDate dataRitiro;
 
-    @ManyToMany(mappedBy = "prenotazioni")
-    @JsonIgnore
-    private List<Prodotto> prodotti;
+    @OneToMany(mappedBy = "prenotazione", cascade = CascadeType.ALL/*, orphanRemoval = true*/)
+    private List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();
+
 }

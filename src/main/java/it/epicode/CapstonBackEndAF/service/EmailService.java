@@ -1,5 +1,7 @@
 package it.epicode.CapstonBackEndAF.service;
 
+import it.epicode.CapstonBackEndAF.model.Prenotazione;
+import it.epicode.CapstonBackEndAF.model.PrenotazioneProdotto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -46,6 +48,34 @@ public class EmailService {
                 "Email: " + emailMittente + "\n\n" +
                 "Messaggio:\n" + contenutoMessaggio;
         messaggio.setText(testo);
+        mailSender.send(messaggio);
+    }
+
+    public void inviaNotificaPrenotazioneAlPanificio(Prenotazione prenotazione) throws MailException {
+        SimpleMailMessage messaggio = new SimpleMailMessage();
+        messaggio.setTo("anna.firinu@tiscali.it");
+        messaggio.setSubject("Nuova Prenotazione Ricevuta");
+
+        StringBuilder testo = new StringBuilder();
+        testo.append("Hai ricevuto una nuova prenotazione:\n\n");
+        testo.append("Nome cliente: ").append(prenotazione.getNomeCliente()).append("\n");
+        testo.append("Telefono: ").append(prenotazione.getTelefono()).append("\n");
+        testo.append("Email: ").append(prenotazione.getEmail()).append("\n");
+        testo.append("Data ritiro: ").append(prenotazione.getDataRitiro()).append("\n\n");
+
+        testo.append("Prodotti prenotati:\n");
+
+        for (PrenotazioneProdotto pp : prenotazione.getPrenotazioneProdotti()) {
+            testo.append("- ")
+                    .append(pp.getProdotto().getNome())
+                    .append(" x ")
+                    .append(pp.getQuantita())
+                    .append(" ")
+                    .append(pp.getTipoQuantita())
+                    .append("\n");
+        }
+
+        messaggio.setText(testo.toString());
         mailSender.send(messaggio);
     }
 }

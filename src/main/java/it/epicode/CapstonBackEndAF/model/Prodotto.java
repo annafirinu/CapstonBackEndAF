@@ -1,9 +1,11 @@
 package it.epicode.CapstonBackEndAF.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,11 +21,8 @@ public class Prodotto {
     private Boolean disponibile;
     private String immagineProdotto;
 
-    @ManyToMany
-    @JoinTable(
-            name = "prenotazioni_prodotti",
-            joinColumns = @JoinColumn(name = "prodotto_id"),
-            inverseJoinColumns = @JoinColumn(name = "prenotazione_id")
-    )
-    private List<Prenotazione> prenotazioni;
+    @OneToMany(mappedBy = "prodotto")
+    @JsonIgnore
+    private List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();
+    //private List<Prenotazione> prenotazioni;
 }

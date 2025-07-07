@@ -19,6 +19,6 @@ public class PrenotazioneDto {
     private String email;
     @NotNull(message = "Obbligatorio inserire la data di ritiro")
     private LocalDate dataRitiro;
-    @NotEmpty(message = "Obbligatorio inserire almeno un elemento")
-    private List<Long> prodottoIds;
+    @NotEmpty(message = "Obbligatorio inserire almeno un prodotto")
+    private List<ProdottoPrenotatoDto> prodotti;
 }

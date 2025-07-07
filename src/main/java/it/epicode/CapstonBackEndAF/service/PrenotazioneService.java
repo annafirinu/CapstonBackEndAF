@@ -1,8 +1,10 @@
 package it.epicode.CapstonBackEndAF.service;
 
 import it.epicode.CapstonBackEndAF.dto.PrenotazioneDto;
+import it.epicode.CapstonBackEndAF.dto.ProdottoPrenotatoDto;
 import it.epicode.CapstonBackEndAF.exception.NotFoundException;
 import it.epicode.CapstonBackEndAF.model.Prenotazione;
+import it.epicode.CapstonBackEndAF.model.PrenotazioneProdotto;
 import it.epicode.CapstonBackEndAF.model.Prodotto;
 import it.epicode.CapstonBackEndAF.repository.PrenotazioneRepository;
 import it.epicode.CapstonBackEndAF.repository.ProdottoRepository;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +33,51 @@ public class PrenotazioneService {
 
     //Metodo che aggiunge una prenotazione
     public Prenotazione savePrenotazione(PrenotazioneDto prenotazioneDto) throws NotFoundException {
+        Prenotazione prenotazione = new Prenotazione();
+        prenotazione.setNomeCliente(prenotazioneDto.getNomeCliente());
+        prenotazione.setTelefono(prenotazioneDto.getTelefono());
+        prenotazione.setEmail(prenotazioneDto.getEmail());
+        prenotazione.setDataRitiro(prenotazioneDto.getDataRitiro());
+
+        // Salviamo la prenotazione prima di associarla ai prodotti (per foreign key)
+        prenotazione = prenotazioneRepository.save(prenotazione);
+
+        List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();
+
+        for (ProdottoPrenotatoDto pDto : prenotazioneDto.getProdotti()) {
+            Prodotto prodotto = prodottoRepository.findById(pDto.getProdottoId())
+                    .orElseThrow(() -> new NotFoundException("Prodotto con ID " + pDto.getProdottoId() + " non trovato"));
+
+            PrenotazioneProdotto pp = new PrenotazioneProdotto();
+            pp.setPrenotazione(prenotazione);
+            pp.setProdotto(prodotto);
+            pp.setQuantita(pDto.getQuantita());
+            pp.setTipoQuantita(pDto.getTipoQuantita());
+
+            prenotazioneProdotti.add(pp);
+        }
+
+        prenotazione.setPrenotazioneProdotti(prenotazioneProdotti); // nuova lista nella tua entity Prenotazione
+
+        prenotazione = prenotazioneRepository.save(prenotazione); // salva anche le relazioni (se hai cascade)
+
+        try {
+            emailService.inviaEmailConfermaPrenotazione(
+                    prenotazione.getEmail(),
+                    prenotazione.getNomeCliente(),
+                    prenotazione.getDataRitiro().toString()
+            );
+
+            emailService.inviaNotificaPrenotazioneAlPanificio(prenotazione);
+
+        } catch (Exception e) {
+            System.err.println("Errore invio email conferma prenotazione: " + e.getMessage());
+        }
+
+        return prenotazione;
+    }
+
+    /*public Prenotazione savePrenotazione(PrenotazioneDto prenotazioneDto) throws NotFoundException {
         Prenotazione prenotazione = new Prenotazione();
         prenotazione.setNomeCliente(prenotazioneDto.getNomeCliente());
         prenotazione.setTelefono (prenotazioneDto.getTelefono());
@@ -56,7 +104,7 @@ public class PrenotazioneService {
         }
 
         return prenotazioneSalvata;
-    }
+    }*/
 
     //Metodo per estrarre tutte le prenotazioni
     public Page<Prenotazione> getAllPrenotazione(int page, int size, String sortBy) {
@@ -71,7 +119,34 @@ public class PrenotazioneService {
 
 
     //Metodo per aggiornare una prenotazione
-    public Prenotazione updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto) throws NotFoundException {
+    public Prenotazione updatePrenotazione(Long id, PrenotazioneDto dto) throws NotFoundException {
+        Prenotazione prenotazione = getPrenotazioneById(id);
+
+        prenotazione.setNomeCliente(dto.getNomeCliente());
+        prenotazione.setTelefono(dto.getTelefono());
+        prenotazione.setEmail(dto.getEmail());
+        prenotazione.setDataRitiro(dto.getDataRitiro());
+
+        prenotazione.getPrenotazioneProdotti().clear();
+
+        // Ricostruisci le associazioni
+        for (ProdottoPrenotatoDto pDto : dto.getProdotti()) {
+            Prodotto prodotto = prodottoRepository.findById(pDto.getProdottoId())
+                    .orElseThrow(() -> new NotFoundException("Prodotto con id " + pDto.getProdottoId() + " non trovato"));
+
+            PrenotazioneProdotto prenotazioneProdotto = new PrenotazioneProdotto();
+            prenotazioneProdotto.setProdotto(prodotto);
+            prenotazioneProdotto.setPrenotazione(prenotazione);
+            prenotazioneProdotto.setQuantita(pDto.getQuantita());
+            prenotazioneProdotto.setTipoQuantita(pDto.getTipoQuantita());
+
+            prenotazione.getPrenotazioneProdotti().add(prenotazioneProdotto);
+        }
+
+        return prenotazioneRepository.save(prenotazione);
+    }
+
+    /*public Prenotazione updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto) throws NotFoundException {
         Prenotazione prenotazioneDaAggiornare = getPrenotazioneById(id);
         prenotazioneDaAggiornare.setNomeCliente(prenotazioneDto.getNomeCliente());
         prenotazioneDaAggiornare.setTelefono(prenotazioneDto.getTelefono());
@@ -84,7 +159,7 @@ public class PrenotazioneService {
         }
         prenotazioneDaAggiornare.setProdotti(prodotti);
         return prenotazioneRepository.save(prenotazioneDaAggiornare);
-    }
+    }*/
 
     //Metodo per eliminare una prenotazione
     public void deletePrenotazione(Long id) throws NotFoundException {
