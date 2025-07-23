@@ -38,8 +38,6 @@ public class ProdottoController {
 
 
     //Richiedo tutti i prodotti presenti
-    @GetMapping("")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<Prodotto> getAllProdotti(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size,
                                      @RequestParam(defaultValue = "id") String sortBy) {
@@ -49,7 +47,6 @@ public class ProdottoController {
 
     //Richiedo un determinato prodotto tramite l'id
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Prodotto getProdotto(@PathVariable Long id) throws NotFoundException {
         return prodottoService.getProdottoById(id);
     }
@@ -83,7 +80,7 @@ public class ProdottoController {
     @GetMapping("/disponibili")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<Prodotto> getProdottiDisponibili(@RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "10") int size,
+                                                 @RequestParam(defaultValue = "100") int size,
                                                  @RequestParam(defaultValue = "id") String sortBy) {
         return prodottoService.getProdottiDisponibili(page, size, sortBy);
     }

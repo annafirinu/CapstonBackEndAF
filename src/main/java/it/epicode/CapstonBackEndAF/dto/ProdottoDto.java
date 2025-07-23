@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 public class ProdottoDto {
     @NotEmpty(message = "Obbligatorio inserire nome")
     private String nome;
+    @NotEmpty(message = "Obbligatorio inserire descrizione")
+    private String descrizione;
+    @NotEmpty(message = "Obbligatorio inserire allergeni")
+    private String allergeni;
     @NotNull(message = "Obbligatorio inserire prezzo")
     @DecimalMin(value = "0.00", inclusive = false, message = "Il prezzo deve essere maggiore di zero")
     private BigDecimal prezzo;

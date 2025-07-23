@@ -29,6 +29,8 @@ public class ProdottoService {
     public Prodotto saveProdotto(ProdottoDto prodottoDto) {
         Prodotto prodotto = new Prodotto();
         prodotto.setNome(prodottoDto.getNome());
+        prodotto.setDescrizione(prodottoDto.getDescrizione());
+        prodotto.setAllergeni(prodottoDto.getAllergeni());
         prodotto.setPrezzo(prodottoDto.getPrezzo());
         prodotto.setDisponibile(prodottoDto.getDisponibile());
         return prodottoRepository.save(prodotto);
@@ -50,6 +52,8 @@ public class ProdottoService {
     public Prodotto updateProdotto(Long id, ProdottoDto prodottoDto) throws NotFoundException {
         Prodotto prodottoDaAggiornare = getProdottoById(id);
         prodottoDaAggiornare.setNome(prodottoDto.getNome());
+        prodottoDaAggiornare.setDescrizione(prodottoDto.getDescrizione());
+        prodottoDaAggiornare.setAllergeni(prodottoDto.getAllergeni());
         prodottoDaAggiornare.setPrezzo(prodottoDto.getPrezzo());
         prodottoDaAggiornare.setDisponibile(prodottoDto.getDisponibile());
         return prodottoRepository.save(prodottoDaAggiornare);

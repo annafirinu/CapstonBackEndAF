@@ -29,13 +29,6 @@ public class JwtTool {
 
     public String createToken(User user){
 
-
-       /* //creazione del token
-        return Jwts.builder().issuedAt(new Date()).
-                expiration(new Date(System.currentTimeMillis()+durata)).
-                subject(String.valueOf(user.getId())).
-                signWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes())).
-                compact();*/
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("authorities", user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

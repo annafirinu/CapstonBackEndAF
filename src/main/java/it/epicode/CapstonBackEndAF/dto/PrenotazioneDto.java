@@ -21,4 +21,5 @@ public class PrenotazioneDto {
     private LocalDate dataRitiro;
     @NotEmpty(message = "Obbligatorio inserire almeno un prodotto")
     private List<ProdottoPrenotatoDto> prodotti;
+    private String note;
 }

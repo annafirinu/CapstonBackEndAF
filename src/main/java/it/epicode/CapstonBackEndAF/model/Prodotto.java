@@ -17,6 +17,8 @@ public class Prodotto {
     @GeneratedValue
     private Long id;
     private String nome;
+    private String descrizione;
+    private String allergeni;
     private BigDecimal prezzo;
     private Boolean disponibile;
     private String immagineProdotto;
@@ -24,5 +26,4 @@ public class Prodotto {
     @OneToMany(mappedBy = "prodotto")
     @JsonIgnore
     private List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();
-    //private List<Prenotazione> prenotazioni;
 }

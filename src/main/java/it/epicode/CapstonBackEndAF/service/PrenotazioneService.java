@@ -38,8 +38,9 @@ public class PrenotazioneService {
         prenotazione.setTelefono(prenotazioneDto.getTelefono());
         prenotazione.setEmail(prenotazioneDto.getEmail());
         prenotazione.setDataRitiro(prenotazioneDto.getDataRitiro());
+        prenotazione.setNote(prenotazioneDto.getNote());
 
-        // Salviamo la prenotazione prima di associarla ai prodotti (per foreign key)
+
         prenotazione = prenotazioneRepository.save(prenotazione);
 
         List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();
@@ -57,9 +58,9 @@ public class PrenotazioneService {
             prenotazioneProdotti.add(pp);
         }
 
-        prenotazione.setPrenotazioneProdotti(prenotazioneProdotti); // nuova lista nella tua entity Prenotazione
+        prenotazione.setPrenotazioneProdotti(prenotazioneProdotti);
 
-        prenotazione = prenotazioneRepository.save(prenotazione); // salva anche le relazioni (se hai cascade)
+        prenotazione = prenotazioneRepository.save(prenotazione);
 
         try {
             emailService.inviaEmailConfermaPrenotazione(
@@ -77,34 +78,6 @@ public class PrenotazioneService {
         return prenotazione;
     }
 
-    /*public Prenotazione savePrenotazione(PrenotazioneDto prenotazioneDto) throws NotFoundException {
-        Prenotazione prenotazione = new Prenotazione();
-        prenotazione.setNomeCliente(prenotazioneDto.getNomeCliente());
-        prenotazione.setTelefono (prenotazioneDto.getTelefono());
-        prenotazione.setEmail(prenotazioneDto.getEmail());
-        prenotazione.setDataRitiro(prenotazioneDto.getDataRitiro());
-        // Converto la lista di ID in una lista di oggetti Prodotto prima di passarla al setProdotti()
-        List<Long> idsRichiesti = prenotazioneDto.getProdottoIds();
-        List<Prodotto> prodotti = prodottoRepository.findAllById(idsRichiesti);
-        // Verifico se qualche ID è mancante
-        if (prodotti.size() != idsRichiesti.size()) {
-            throw new NotFoundException("Uno o più ID prodotto non sono validi");
-        }
-        prenotazione.setProdotti(prodotti);
-        Prenotazione prenotazioneSalvata = prenotazioneRepository.save(prenotazione);
-
-        try {
-            emailService.inviaEmailConfermaPrenotazione(
-                    prenotazione.getEmail(),
-                    prenotazione.getNomeCliente(),
-                    prenotazione.getDataRitiro().toString()
-            );
-        } catch (Exception e) {
-            System.err.println("Errore invio email conferma prenotazione: " + e.getMessage());
-        }
-
-        return prenotazioneSalvata;
-    }*/
 
     //Metodo per estrarre tutte le prenotazioni
     public Page<Prenotazione> getAllPrenotazione(int page, int size, String sortBy) {
@@ -126,10 +99,11 @@ public class PrenotazioneService {
         prenotazione.setTelefono(dto.getTelefono());
         prenotazione.setEmail(dto.getEmail());
         prenotazione.setDataRitiro(dto.getDataRitiro());
+        prenotazione.setNote(dto.getNote());
 
         prenotazione.getPrenotazioneProdotti().clear();
 
-        // Ricostruisci le associazioni
+
         for (ProdottoPrenotatoDto pDto : dto.getProdotti()) {
             Prodotto prodotto = prodottoRepository.findById(pDto.getProdottoId())
                     .orElseThrow(() -> new NotFoundException("Prodotto con id " + pDto.getProdottoId() + " non trovato"));
@@ -146,20 +120,7 @@ public class PrenotazioneService {
         return prenotazioneRepository.save(prenotazione);
     }
 
-    /*public Prenotazione updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto) throws NotFoundException {
-        Prenotazione prenotazioneDaAggiornare = getPrenotazioneById(id);
-        prenotazioneDaAggiornare.setNomeCliente(prenotazioneDto.getNomeCliente());
-        prenotazioneDaAggiornare.setTelefono(prenotazioneDto.getTelefono());
-        prenotazioneDaAggiornare.setEmail(prenotazioneDto.getEmail());
-        prenotazioneDaAggiornare.setDataRitiro(prenotazioneDto.getDataRitiro());
-        List<Long> idsRichiesti = prenotazioneDto.getProdottoIds();
-        List<Prodotto> prodotti = prodottoRepository.findAllById(idsRichiesti);
-        if (prodotti.size() != idsRichiesti.size()) {
-            throw new NotFoundException("Uno o più ID prodotto non sono validi");
-        }
-        prenotazioneDaAggiornare.setProdotti(prodotti);
-        return prenotazioneRepository.save(prenotazioneDaAggiornare);
-    }*/
+
 
     //Metodo per eliminare una prenotazione
     public void deletePrenotazione(Long id) throws NotFoundException {

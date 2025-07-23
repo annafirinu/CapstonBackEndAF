@@ -36,7 +36,7 @@ public class MessaggioController {
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<Messaggio> getAllMessaggi(@RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(defaultValue = "100") int size,
                                           @RequestParam(defaultValue = "id") String sortBy) {
         return messaggioService.getAllMessaggi(page, size, sortBy);
     }

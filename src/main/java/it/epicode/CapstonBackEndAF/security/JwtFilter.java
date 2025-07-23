@@ -63,15 +63,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         String method = request.getMethod();
 
-        // Escludi solo le POST pubbliche (messaggi e prenotazioni)
+        // Escludo solo le POST pubbliche (messaggi e prenotazioni)
         if (
                 (path.equals("/messaggi") && method.equalsIgnoreCase("POST")) ||
-                        (path.equals("/prenotazioni") && method.equalsIgnoreCase("POST"))
+                        (path.equals("/prenotazioni") && method.equalsIgnoreCase("POST")) ||
+                        (path.startsWith("/prodotti") && method.equalsIgnoreCase("GET"))
         ) {
             return true;  // Non applicare il filtro JWT
         }
 
-        // Escludi altri endpoint pubblici
+        // Escludo altri endpoint pubblici
         String[] excludedEndpoints = new String[]{"/auth/**", "/html/**"};
         return Arrays.stream(excludedEndpoints)
                 .anyMatch(e -> new AntPathMatcher().match(e, path));

@@ -19,6 +19,7 @@ public class Prenotazione {
     private String telefono;
     private String email;
     private LocalDate dataRitiro;
+    private String note;
 
     @OneToMany(mappedBy = "prenotazione", cascade = CascadeType.ALL/*, orphanRemoval = true*/)
     private List<PrenotazioneProdotto> prenotazioneProdotti = new ArrayList<>();

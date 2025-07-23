@@ -62,6 +62,7 @@ public class EmailService {
         testo.append("Telefono: ").append(prenotazione.getTelefono()).append("\n");
         testo.append("Email: ").append(prenotazione.getEmail()).append("\n");
         testo.append("Data ritiro: ").append(prenotazione.getDataRitiro()).append("\n\n");
+        testo.append("Note: ").append(prenotazione.getNote()).append("\n\n");
 
         testo.append("Prodotti prenotati:\n");
 

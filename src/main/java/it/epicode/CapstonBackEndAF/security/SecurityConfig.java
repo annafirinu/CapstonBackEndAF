@@ -1,6 +1,6 @@
 package it.epicode.CapstonBackEndAF.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,8 +29,8 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(http->http.requestMatchers("/auth/**").permitAll());
 
-        //httpSecurity.authorizeHttpRequests(http->http.requestMatchers("/import/**").permitAll());
 
+        httpSecurity.authorizeHttpRequests(http->http.requestMatchers(HttpMethod.GET, "/prodotti/**").permitAll());
         httpSecurity.authorizeHttpRequests(http->http.requestMatchers(HttpMethod.POST, "/messaggi/**").permitAll());
         httpSecurity.authorizeHttpRequests(http->http.requestMatchers(HttpMethod.POST, "/prenotazioni/**").permitAll());
 
