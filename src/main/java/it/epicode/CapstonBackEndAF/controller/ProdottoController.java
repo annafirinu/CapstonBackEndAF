@@ -38,8 +38,9 @@ public class ProdottoController {
 
 
     //Richiedo tutti i prodotti presenti
+    @GetMapping("")
     public Page<Prodotto> getAllProdotti(@RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
+                                     @RequestParam(defaultValue = "100") int size,
                                      @RequestParam(defaultValue = "id") String sortBy) {
         return prodottoService.getAllProdotti(page, size, sortBy);
     }
